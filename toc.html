@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html {
+  scroll-behavior: smooth;
+}
+        .container {
+            display: flex;
+        }
+        h1, h2, h3 {
+            min-height: 50vh;
+        }
+        #toc {
+            position: sticky;
+            position: -webkit-sticky;
+            top: 0;
+            max-height: 50vh;
+        }
+        #toc a {
+            transition: all 0.5 ease-in-out;
+        }
+        #toc .active {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div id="toc">
+        <h3>Table of Contents</h3>
+    </div>
+    <hr/>
+    <div id="contents">
+        <h1>Fruits</h1>
+        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Pariatur natus quod sit facere laudantium eaque! Voluptatem, reprehenderit! Quos repellat harum veritatis. Enim libero impedit debitis, ad excepturi voluptas. Accusamus, porro!</p>
+        <h2>Red Fruits</h2>
+        <h4>Apple</h4>
+        <h3>Raspberry</h3>
+        <h2>Orange Fruits</h2>
+        <h3>Orange</h3>
+        <h1>Tangerine</h1>
+        <h2>Vegetables</h2>
+        <h2>Vegetables Which Are Actually Fruits</h2>
+        <h3>Tomato</h3>
+        <h3>Eggplant</h3>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        var toc = document.getElementById("toc");
+        var headings = document.querySelectorAll('#contents > h1,#contents > h2,#contents > h3,#contents > h4,#contents > h5,#contents > h6');
+var list = document.createElement('ul');
+list.classList.add('list');
+Array.from(headings).map(h => {
+  h.id = h.innerText.replaceAll(" ","-").toLowerCase();
+  var lis = document.createElement('li');
+  lis.classList.add(h.tagName);
+  var a = document.createElement('a');
+  a.innerText = h.innerText;
+  a.href = `#${h.id.replaceAll(" ","-").toLowerCase()}`;
+  lis.appendChild(a);
+  list.appendChild(lis);
+});
+toc.append(list);
+/* $(document).ready(function () {
+    $(document).on("scroll", onScroll);
+    
+    smoothscroll
+    $('a[href^="#"]').on('click', function (e) {
+        e.preventDefault();
+        $(document).off("scroll");
+        
+        $('a[href^="#"]').each(function () {
+            $(this).removeClass('active');
+        })
+        $(this).addClass('active');
+      
+        var target = this.hash,
+        menu = target;
+        $target = $(target);
+        $('html, body').stop().animate({
+            'scrollTop': $target.offset().top+2
+        }, 500, 'swing', function () {
+            window.location.hash = target;
+            $(document).on("scroll", onScroll);
+        });
+    });
+}); */
+
+/* function onScroll(event){
+    var scrollPos = $(document).scrollTop();
+    $('#toc a').each(function () {
+        var currLink = $(this);
+        var refElement = $(currLink.attr("href"));
+        if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
+            $('#toc ul li a').removeClass("active");
+            currLink.addClass("active");
+        }
+        else{
+                currLink.removeClass("active");
+        }
+    });
+} */
+
+/* window.onload = function () {
+    var toc = "";
+    var level = 0;
+
+    document.getElementById("contents").innerHTML =
+        document.getElementById("contents").innerHTML.replace(
+            /<h([\d])>([^<]+)<\/h([\d])>/gi,
+            function (str, openLevel, titleText, closeLevel) {
+                if (openLevel != closeLevel) {
+                    return str;
+                }
+
+                if (openLevel > level) {
+                    toc += (new Array(openLevel - level + 1)).join("<ul>");
+                } else if (openLevel < level) {
+                    toc += (new Array(level - openLevel + 1)).join("</ul>");
+                }
+
+                level = parseInt(openLevel);
+
+                var anchor = titleText.replace(/ /g, "_");
+                toc += "<li><a href=\"#" + anchor + "\">" + titleText
+                    + "</a></li>";
+
+                return "<h" + openLevel + "><a name=\"" + anchor + "\">"
+                    + titleText + "</a></h" + closeLevel + ">";
+            }
+        );
+
+    if (level) {
+        toc += (new Array(level + 1)).join("</ul>");
+    }
+
+    document.getElementById("toc").innerHTML += toc;
+} */
+// Get all sections that have an ID defined
+const sections = document.querySelectorAll('#contents > h1,#contents > h2,#contents > h3,#contents > h4,#contents > h5,#contents > h6');
+
+// Add an event listener listening for scroll
+window.addEventListener("scroll", navHighlighter);
+
+function navHighlighter() {
+  
+  // Get current scroll position
+  let scrollY = window.pageYOffset;
+  
+  // Now we loop through sections to get height, top and ID values for each
+  sections.forEach(current => {
+    const sectionHeight = current.offsetHeight;
+  
+    // Original:
+    // const sectionTop = current.offsetTop - 50;
+    //  
+    // Alex Turnwall's update:
+    // Updated original line (above) to use getBoundingClientRect instead of offsetTop, based on:
+    // https://plainjs.com/javascript/styles/get-the-position-of-an-element-relative-to-the-document-24/
+    // https://newbedev.com/difference-between-getboundingclientrect-top-and-offsettop
+    // This allows the use of sections inside a relative parent, which I'm not using here, but needed for a project
+    //
+    const sectionTop = (current.getBoundingClientRect().top + window.pageYOffset) - 50;
+    sectionId = current.getAttribute("id");
+    
+    /*
+    - If our current scroll position enters the space where current section on screen is, add .active class to corresponding navigation link, else remove it
+    - To know which link needs an active class, we use sectionId variable we are getting while looping through sections as an selector
+    */
+    if (
+      scrollY > sectionTop &&
+      scrollY <= sectionTop + sectionHeight
+    ){
+      document.querySelector("#toc a[href*=" + sectionId + "]").classList.add("active");
+    } else {
+      document.querySelector("#toc a[href*=" + sectionId + "]").classList.remove("active");
+    }
+  });
+}
+
+</script>
+</body>
+</html>

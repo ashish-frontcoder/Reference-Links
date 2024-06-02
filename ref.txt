@@ -4,3 +4,6 @@ https://www.youtube.com/watch?v=ZT-Mb5qZ8PI
 
 Load post count
 https://codepen.io/sachinsaini794/pen/OJrPPPe
+
+Active on scroll and click
+https://codepen.io/ifeltblankk/pen/rLPYpx

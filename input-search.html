@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Data Search</title>
+<style>
+  /* Basic styles for demonstration */
+  #search-box {
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<input type="text" id="search-box" placeholder="Search...">
+<div id="search-results"></div>
+
+<script>
+  const apiUrl = 'https://api.spacexdata.com/v3/launches?limit=100'; // Replace with your API endpoint URL
+
+  // Function to fetch data from API based on search query
+  async function fetchData(query) {
+    try {
+      const response = await fetch(`${apiUrl}?query=${query}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function to display search results
+  function displaySearchResults(results) {
+    const resultsContainer = document.getElementById('search-results');
+    resultsContainer.innerHTML = '';
+
+    if (results.length > 0) {
+      results.forEach(result => {
+        const resultItem = document.createElement('div');
+        resultItem.textContent = result.name; // Assuming the API returns objects with a 'name' property
+        resultsContainer.appendChild(resultItem);
+      });
+    } else {
+      resultsContainer.textContent = 'No results found';
+    }
+  }
+
+  // Event listener for input change
+  document.getElementById('search-box').addEventListener('input', async function() {
+    const query = this.value.trim();
+    if (query.length > 0) {
+      const data = await fetchData(query);
+      displaySearchResults(data);
+    } else {
+      document.getElementById('search-results').innerHTML = '';
+    }
+  });
+</script>
+
+</body>
+</html>
